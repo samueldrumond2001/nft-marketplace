@@ -38,3 +38,6 @@ docs/*.report.json
 
 # temporários do plugin do TanStack Router
 .tanstack
+
+# metadados locais do projeto na Vercel
+.vercel

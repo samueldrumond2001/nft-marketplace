@@ -175,20 +175,22 @@ modo privativo) — sem ele, `/api` cairia no fallback da SPA e voltaria HTML.
 
 Selecionáveis por `?scenario=` na URL:
 
-| cenário          | o que exercita                                |
-| ---------------- | --------------------------------------------- |
-| `happy`          | padrão                                        |
-| `empty`          | catálogo e carrinho vazios                    |
-| `slow`           | 3s de latência, para ver os esqueletos        |
-| `price-changed`  | preço sobe ao vivo e o pedido volta 409       |
-| `sold-out`       | edição esgota durante a sessão                |
-| `payment-failed` | transação recusada                            |
-| `network-error`  | 5xx na primeira tentativa, sucesso na segunda |
-| `unauthorized`   | 401 em `/me`                                  |
-| `promo-invalid`  | 422 no código promocional                     |
-| `offline`        | toda chamada falha no transporte, sem status  |
-| `socket-down`    | só o tempo real cai; o REST continua de pé    |
-| `favorite-error` | 500 ao favoritar, para ver o rollback         |
+| cenário           | o que exercita                                |
+| ----------------- | --------------------------------------------- |
+| `happy`           | padrão                                        |
+| `empty`           | catálogo e carrinho vazios                    |
+| `slow`            | 3s de latência, para ver os esqueletos        |
+| `price-changed`   | preço sobe ao vivo e o pedido volta 409       |
+| `sold-out`        | edição esgota durante a sessão                |
+| `payment-failed`  | transação recusada                            |
+| `network-error`   | 5xx na primeira tentativa, sucesso na segunda |
+| `unauthorized`    | 401 em `/me`                                  |
+| `promo-invalid`   | 422 no código promocional                     |
+| `offline`         | toda chamada falha no transporte, sem status  |
+| `socket-down`     | só o tempo real cai; o REST continua de pé    |
+| `favorite-error`  | 500 ao favoritar, para ver o rollback         |
+| `session-expired` | sessão vence ao confirmar a compra            |
+| `wallet-refused`  | a carteira recusa a conexão                   |
 
 Exemplo: `http://localhost:4174/mercado/emerald-ape-042?scenario=sold-out`
 
@@ -206,8 +208,8 @@ chave de idempotência com outro conteúdo** (409 `IDEMPOTENCY_KEY_REUSED`).
 
 ```
 unit      9 testes    aritmética de ETH
-e2e     111 testes    desktop (1440), tablet (768) e mobile (Pixel 5)
-visual    4 baselines início, detalhe, carrinho, header/rodapé
+e2e     118 testes    desktop (1440), tablet (768) e mobile (Pixel 5)
+visual    5 baselines início, detalhe, carrinho, pagamento, header/rodapé
 ```
 
 Os E2E rodam contra o **build de produção**, não contra o dev server, então
@@ -262,6 +264,17 @@ decisões de UX que não vieram do Figma: **[ARCHITECTURE.md](./ARCHITECTURE.md)
 ---
 
 ## Deploy
+
+**https://nft-marketplace-samueldrumond0501-gmailcoms-projects.vercel.app**
+
+Vercel, a partir da branch `main`. A configuração está em `vercel.json`: o
+rewrite roda depois da checagem de sistema de arquivos, então os arquivos
+reais — assets, artes e o service worker — são servidos como estão, e só o
+que não existe cai no `index.html`. Assets com hash recebem cache de um ano;
+`mockServiceWorker.js` recebe `no-cache`, porque ele é a API.
+
+O build na Vercel é o mesmo `npm run build` de sempre, e o service worker é
+gerado durante ele (`msw init`), então não há arquivo gerado versionado.
 
 ---
 
