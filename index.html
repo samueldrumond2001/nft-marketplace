@@ -10,9 +10,38 @@
     />
     <meta name="theme-color" content="#140d0a" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <!--
+      Casca pintada antes do JavaScript. No celular estrangulado do Lighthouse
+      o bundle leva segundos para avaliar, e até aqui a tela era branca — o
+      pior estado possível, porque parece que o site não abriu. Estes poucos
+      bytes mostram a marca e o fundo certo desde o primeiro quadro, e somem
+      no momento em que o React monta em #root.
+    -->
+    <style>
+      html {
+        background: #140d0a;
+        color-scheme: dark;
+      }
+      #boot {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100dvh;
+        font:
+          700 24px/1 'Roboto Mono',
+          ui-monospace,
+          monospace;
+        letter-spacing: 0.18em;
+        color: #f5f1eb;
+      }
+      #root:not(:empty) + #boot {
+        display: none;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
+    <div id="boot" aria-hidden="true">KURIO</div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
