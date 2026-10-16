@@ -41,6 +41,20 @@ test.describe('regressão visual', () => {
     await expect(page).toHaveScreenshot('carrinho.png', { fullPage: true })
   })
 
+  test('pagamento', async ({ page }) => {
+    await page.goto('/')
+    const card = page.getByRole('article').filter({ hasText: 'Emerald Ape #042' })
+    await card.hover()
+    await card.getByRole('button', { name: /Adicionar .* ao carrinho/ }).click()
+    await expect(page.getByRole('link', { name: /^Carrinho, 1 item/ })).toBeVisible()
+
+    await page.goto('/pagamento')
+    await expect(page.getByRole('form', { name: 'Perfil do colecionador' })).toBeVisible()
+    await settle(page)
+
+    await expect(page).toHaveScreenshot('pagamento.png', { fullPage: true })
+  })
+
   test('cabeçalho e rodapé', async ({ page }) => {
     await page.goto('/')
     await settle(page)
