@@ -8,8 +8,11 @@ import { cartQuery } from '@/features/cart'
 import {
   CheckoutForm,
   OrderSummary,
+  useConnectWallet,
+  useDisconnectWallet,
   usePlaceOrder,
   useQuote,
+  walletSessionQuery,
   type CheckoutValues,
 } from '@/features/checkout'
 import { ApiError } from '@/lib/http'
@@ -26,6 +29,9 @@ function CheckoutPage() {
   const { data: cart } = useQuery(cartQuery)
   const quote = useQuote()
   const placeOrder = usePlaceOrder()
+  const { data: connected } = useQuery(walletSessionQuery)
+  const connectWallet = useConnectWallet()
+  const disconnectWallet = useDisconnectWallet()
   const [wallet, setWallet] = useState('coinbase')
 
   // O orçamento é guardado entre tentativas. A chave de idempotência deriva do
@@ -44,15 +50,29 @@ function CheckoutPage() {
         onSuccess: (order) =>
           void navigate({ to: '/pedido/$orderId', params: { orderId: order.id } }),
         onError: (error) => {
-          if (error instanceof ApiError && error.status === 409) {
+          if (!(error instanceof ApiError)) return
+
+          if (error.status === 409) {
             pendingQuoteId.current = null
+            return
+          }
+
+          /*
+           * Sessão vencida na hora de confirmar. O diálogo de login é um
+           * parâmetro de busca sobre a página atual, então o formulário
+           * preenchido, o carrinho e o orçamento continuam onde estavam — e
+           * a chave de idempotência também, que é o que impede a segunda
+           * tentativa de virar uma segunda compra.
+           */
+          if (error.status === 401) {
+            void navigate({ to: '.', search: (prev) => ({ ...prev, auth: 'login' }) })
           }
         },
       },
     )
   }
 
-  const submit = (values: CheckoutValues) => {
+  const askQuoteAndPlace = (values: CheckoutValues) => {
     if (pendingQuoteId.current) {
       placeWith(pendingQuoteId.current, values)
       return
@@ -66,9 +86,24 @@ function CheckoutPage() {
     })
   }
 
-  const failure = placeOrder.error ?? quote.error
+  /*
+   * Confirmar com a carteira desconectada conecta primeiro. É o que uma
+   * carteira de verdade faz: o clique abre a extensão, a pessoa aceita, e só
+   * então a transação segue. Se ela recusar, nada é criado e a mensagem da
+   * recusa aparece — a compra não acontece pela metade.
+   */
+  const submit = (values: CheckoutValues) => {
+    if (connected) {
+      askQuoteAndPlace(values)
+      return
+    }
+
+    connectWallet.mutate(wallet, { onSuccess: () => askQuoteAndPlace(values) })
+  }
+
+  const failure = placeOrder.error ?? quote.error ?? connectWallet.error
   const message = failure instanceof ApiError ? failure.message : undefined
-  const submitting = quote.isPending || placeOrder.isPending
+  const submitting = connectWallet.isPending || quote.isPending || placeOrder.isPending
 
   return (
     <Container className="pt-6 pb-20">
@@ -94,6 +129,10 @@ function CheckoutPage() {
             onWalletChange={setWallet}
             submitting={submitting}
             error={message}
+            connectedAddress={connected?.address ?? null}
+            connecting={connectWallet.isPending}
+            onConnect={() => connectWallet.mutate(wallet)}
+            onDisconnect={() => disconnectWallet.mutate()}
           />
         </div>
       )}

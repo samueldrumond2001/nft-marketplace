@@ -88,6 +88,71 @@ test.describe('cenários de falha', () => {
     expect(orderPosts[0]).not.toBe('sem-chave')
   })
 
+  test('session-expired: o login abre sobre o checkout e a chave não muda', async ({ page }) => {
+    const orderPosts: string[] = []
+    page.on('request', (request) => {
+      if (request.url().includes('/api/orders') && request.method() === 'POST') {
+        orderPosts.push(request.headers()['idempotency-key'] ?? 'sem-chave')
+      }
+    })
+
+    await addToCart(page, 'session-expired')
+    await page.goto('/pagamento?scenario=session-expired')
+
+    await fillCheckout(page)
+    await page.getByRole('button', { name: 'Confirmar compra' }).click()
+
+    // o diálogo abre sobre a página, sem trocar de rota
+    await expect(page.getByRole('dialog', { name: 'Entrar' })).toBeVisible()
+    await expect(page).toHaveURL(/\/pagamento/)
+
+    const dialog = page.getByRole('dialog', { name: 'Entrar' })
+    await dialog.getByLabel('E-mail').fill('ana@kurio.dev')
+    await dialog.getByLabel('Senha', { exact: true }).fill('kurio1234')
+    await dialog.getByRole('button', { name: 'Entrar', exact: true }).click()
+    await expect(dialog).toBeHidden()
+
+    // o formulário continua preenchido: nada foi remontado
+    const form = page.getByRole('form', { name: 'Perfil do colecionador' })
+    await expect(form.getByLabel('Nome de exibição')).toHaveValue('Samuel D.')
+
+    await page.getByRole('button', { name: 'Confirmar compra' }).click()
+    await expect(page).toHaveURL(/\/pedido\//, { timeout: 15_000 })
+
+    // mesma chave nas duas tentativas: voltar da sessão não cria outra compra
+    expect(orderPosts).toHaveLength(2)
+    expect(orderPosts[0]).toBe(orderPosts[1])
+  })
+
+  test('wallet-refused: a carteira recusa, nenhum pedido é criado', async ({ page }) => {
+    let orderPosts = 0
+    page.on('request', (request) => {
+      if (request.url().includes('/api/orders') && request.method() === 'POST') orderPosts += 1
+    })
+
+    await addToCart(page, 'wallet-refused')
+    await page.goto('/pagamento?scenario=wallet-refused')
+
+    await page.getByRole('button', { name: 'Conectar carteira' }).click()
+    await expect(page.getByRole('alert')).toContainText(/recusada na carteira/i)
+
+    // volta ao estado inicial: dá para tentar de novo
+    await expect(page.getByRole('button', { name: 'Conectar carteira' })).toBeEnabled()
+    expect(orderPosts).toBe(0)
+  })
+
+  test('a carteira conecta, mostra o endereço e desconecta', async ({ page }) => {
+    await addToCart(page, 'happy')
+    await page.goto('/pagamento')
+
+    await page.getByRole('button', { name: 'Conectar carteira' }).click()
+    await expect(page.getByText('Carteira conectada')).toBeVisible()
+    await expect(page.getByText(/^0x91B7E3…/)).toBeVisible()
+
+    await page.getByRole('button', { name: 'Desconectar' }).click()
+    await expect(page.getByRole('button', { name: 'Conectar carteira' })).toBeVisible()
+  })
+
   test('payment-failed: a transação recusada explica o motivo', async ({ page }) => {
     await addToCart(page, 'payment-failed')
     await page.goto('/pagamento?scenario=payment-failed')

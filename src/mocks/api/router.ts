@@ -25,6 +25,7 @@ import {
   updateCartItem,
 } from './cart'
 import { getNft, getRelatedNfts, listNfts, type MockResult } from './nfts'
+import { connectWallet, disconnectWallet, getWallet, resetWallet } from './wallet'
 import { createOrder, createQuote, getOrder, resetOrders } from './orders'
 import { resetSocketVersions } from '../socket/market'
 
@@ -45,6 +46,7 @@ export function resetMockState(): MockResult {
   resetAccounts()
   resetCarts()
   resetOrders()
+  resetWallet()
   resetSocketVersions()
   return { status: 200, body: { ok: true } }
 }
@@ -79,6 +81,7 @@ export function routeMockRequest({
     if (pathname === '/api/me') return me(scenario)
     if (pathname === '/api/wallets') return listWallets()
     if (pathname === '/api/favorites') return listFavorites()
+    if (pathname === '/api/wallet') return getWallet()
 
     const related = /^\/api\/nfts\/([^/]+)\/related$/.exec(pathname)?.[1]
     if (related) return getRelatedNfts(decodeURIComponent(related))
@@ -96,6 +99,8 @@ export function routeMockRequest({
     if (pathname === '/api/auth/logout') return logout()
     if (pathname === '/api/auth/refresh') return refresh()
     if (pathname === '/api/me/password') return changePassword(body)
+    if (pathname === '/api/wallet/connect') return connectWallet(body, scenario)
+    if (pathname === '/api/wallet/disconnect') return disconnectWallet()
     if (pathname === '/api/wallets') return createWallet(body)
     if (pathname === '/api/cart/items') return addCartItem(body)
     if (pathname === '/api/cart/promo') {

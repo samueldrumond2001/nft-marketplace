@@ -57,6 +57,11 @@ test.describe('favoritos', () => {
   })
 
   test('falha de mutation desfaz o coração', async ({ page }) => {
+    // espera uma ida e volta que falha de propósito, com a latência variável
+    // do mock por cima; com a suíte inteira em paralelo o orçamento padrão
+    // fica apertado
+    test.slow()
+
     await page.goto('/')
     await signIn(page)
 

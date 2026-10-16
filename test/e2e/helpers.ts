@@ -44,8 +44,9 @@ export function cardOf(page: Page, name: string) {
  */
 export async function pressCardAction(page: Page, name: string, action: string) {
   const button = cardOf(page, name).getByRole('button', { name: new RegExp(`^${action}`) })
-  await button.focus()
-  await page.keyboard.press('Enter')
+  // locator.press espera o elemento ficar acionável antes de focar; focar na
+  // mão e teclar em seguida perdia a tecla quando a grade ainda remontava
+  await button.press('Enter')
 }
 
 /** Adiciona ao carrinho e espera o contador do header, que confirma o POST. */

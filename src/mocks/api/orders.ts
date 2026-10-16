@@ -110,6 +110,16 @@ export function createOrder(
   const attempt = (attempts.get(idempotencyKey) ?? 0) + 1
   attempts.set(idempotencyKey, attempt)
 
+  // Sessão que vence exatamente na hora de confirmar. Só na primeira
+  // tentativa: depois de entrar de novo, o mesmo pedido tem que passar — com
+  // a mesma chave, senão a volta criaria uma compra a mais.
+  if (scenario === 'session-expired' && attempt === 1) {
+    return {
+      status: 401,
+      body: { error: { code: 'UNAUTHENTICATED', message: 'Sua sessão expirou. Entre de novo.' } },
+    }
+  }
+
   // Falha transitória: cai na primeira tentativa e passa na segunda. É assim
   // que dá para ver que o retry reusa a chave em vez de criar outro pedido.
   if (scenario === 'network-error' && attempt === 1) {

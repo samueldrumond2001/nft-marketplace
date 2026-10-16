@@ -14,6 +14,8 @@ export const SCENARIOS = [
   'offline',
   'socket-down',
   'favorite-error',
+  'session-expired',
+  'wallet-refused',
 ] as const
 
 export type Scenario = (typeof SCENARIOS)[number]

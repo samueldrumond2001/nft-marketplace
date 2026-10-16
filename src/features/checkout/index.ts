@@ -1,5 +1,12 @@
 // Superfície pública da feature. O resto é interno (regra no eslint.config.js).
 export { orderQuery, usePlaceOrder, useQuote } from './api/checkout'
+export {
+  WALLET_SESSION_KEY,
+  useConnectWallet,
+  useDisconnectWallet,
+  walletSessionQuery,
+} from './api/wallet'
+export type { WalletSession } from './api/wallet'
 export { CheckoutForm } from './components/CheckoutForm'
 export { OrderSummary } from './components/OrderSummary'
 export {

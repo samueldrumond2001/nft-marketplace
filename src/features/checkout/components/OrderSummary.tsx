@@ -15,6 +15,11 @@ interface OrderSummaryProps {
   onWalletChange: (wallet: string) => void
   submitting: boolean
   error?: string | undefined
+  /** endereço conectado, ou null enquanto a carteira não aceitou */
+  connectedAddress?: string | null
+  connecting?: boolean
+  onConnect?: () => void
+  onDisconnect?: () => void
 }
 
 export function OrderSummary({
@@ -24,6 +29,10 @@ export function OrderSummary({
   onWalletChange,
   submitting,
   error,
+  connectedAddress = null,
+  connecting = false,
+  onConnect,
+  onDisconnect,
 }: OrderSummaryProps) {
   return (
     <aside aria-label="Seus NFTs">
@@ -110,6 +119,13 @@ export function OrderSummary({
         </p>
       )}
 
+      <WalletConnection
+        address={connectedAddress}
+        connecting={connecting}
+        onConnect={onConnect}
+        onDisconnect={onDisconnect}
+      />
+
       <Button
         type="submit"
         form={formId}
@@ -128,5 +144,55 @@ function Row({ label, value }: { label: string; value: string }) {
       <dt className="text-foreground">{label}</dt>
       <dd className="text-foreground tabular">{value}</dd>
     </div>
+  )
+}
+
+/*
+ * Três estados, porque uma carteira real só tem esses três: desconectada,
+ * esperando o aceite dentro da extensão, e conectada com endereço. A recusa
+ * não é um quarto estado — é a volta ao primeiro, com o motivo à vista.
+ *
+ * Confirmar sem estar conectado funciona: o clique conecta e segue. Obrigar
+ * a conectar antes seria um passo a mais sem ganho, e quem já conectou vê o
+ * endereço que vai assinar.
+ */
+function WalletConnection({
+  address,
+  connecting,
+  onConnect,
+  onDisconnect,
+}: {
+  address: string | null
+  connecting: boolean
+  onConnect?: (() => void) | undefined
+  onDisconnect?: (() => void) | undefined
+}) {
+  if (!onConnect) return null
+
+  if (address) {
+    return (
+      <div className="border-border-soft rounded-card mt-4 flex items-center justify-between gap-3 border px-4 py-3">
+        <div className="min-w-0">
+          <p className="text-text-accent text-micro font-bold">Carteira conectada</p>
+          <p className="text-text-secondary text-micro truncate" title={address}>
+            {address.slice(0, 8)}…{address.slice(-6)}
+          </p>
+        </div>
+        <Button variant="ghost" size="sm" onClick={onDisconnect} className="shrink-0">
+          Desconectar
+        </Button>
+      </div>
+    )
+  }
+
+  return (
+    <Button
+      variant="outline"
+      onClick={onConnect}
+      disabled={connecting}
+      className="mt-4 w-full text-xs font-normal"
+    >
+      {connecting ? 'Aguardando a carteira...' : 'Conectar carteira'}
+    </Button>
   )
 }
