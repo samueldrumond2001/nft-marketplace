@@ -1,8 +1,10 @@
 /* Fonte auto-hospedada: pelo Google Fonts ela bloqueava o render por ~940ms
-   no celular estrangulado, por ser origem externa no caminho crítico. */
-@import '@fontsource/roboto-mono/400.css';
-@import '@fontsource/roboto-mono/500.css';
-@import '@fontsource/roboto-mono/700.css';
+   no celular estrangulado, por ser origem externa no caminho crítico.
+   Só o subconjunto latino: o pacote completo traz cirílico, grego e vietnamita
+   em cada peso, nove arquivos que esta interface nunca usa. */
+@import '@fontsource/roboto-mono/latin-400.css';
+@import '@fontsource/roboto-mono/latin-500.css';
+@import '@fontsource/roboto-mono/latin-700.css';
 @import 'tailwindcss';
 
 /*
@@ -24,6 +26,32 @@
   --color-foreground: #f5f1eb;
   --color-text-primary: #f7f3ec;
   --color-background-elevated: #fbfbfb;
+
+  /* vermelho de erro: o Figma não tem tela de falha, então é o único valor
+   * que não veio de lá. Fica aqui para não virar literal espalhado. */
+  --color-danger: #f87171;
+
+  /*
+   * Ponte para o shadcn/ui. Os componentes do registro são escritos contra
+   * nomes semânticos (primary, muted, ring...). Em vez de reescrever cada um,
+   * os nomes apontam para os tokens do Figma acima: o componente chega com a
+   * identidade da Kurio sem fork do código do registro.
+   */
+  --color-background: var(--color-ink);
+  --color-card: var(--color-surface-card);
+  --color-card-foreground: var(--color-text-primary);
+  --color-popover: var(--color-surface-card);
+  --color-popover-foreground: var(--color-text-primary);
+  --color-primary-foreground: var(--color-ink);
+  --color-secondary-foreground: var(--color-ink);
+  --color-muted: var(--color-surface-dark);
+  --color-muted-foreground: var(--color-text-secondary);
+  --color-accent: var(--color-border-soft);
+  --color-accent-foreground: var(--color-text-primary);
+  --color-destructive: var(--color-danger);
+  --color-destructive-foreground: var(--color-ink);
+  --color-input: var(--color-border);
+  --color-ring: var(--color-primary);
 
   /* ---- tipografia ----
    * O design usa Roboto Mono em praticamente tudo, inclusive títulos.
@@ -144,5 +172,36 @@
     border-radius: 9999px;
     background: var(--color-primary);
     cursor: pointer;
+  }
+}
+
+@layer components {
+  /* faixa clara percorrendo o bloco; o gradiente é 3x a largura e só a
+     posição anima, então não há reflow */
+  .kurio-shimmer {
+    background-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--color-border-soft) 50%,
+      transparent 100%
+    );
+    background-size: 300% 100%;
+    background-repeat: no-repeat;
+    animation: kurio-shimmer 1.4s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .kurio-shimmer {
+      animation: none;
+    }
+  }
+}
+
+@keyframes kurio-shimmer {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -150% 0;
   }
 }
