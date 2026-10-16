@@ -1,0 +1,148 @@
+/* Fonte auto-hospedada: pelo Google Fonts ela bloqueava o render por ~940ms
+   no celular estrangulado, por ser origem externa no caminho crítico. */
+@import '@fontsource/roboto-mono/400.css';
+@import '@fontsource/roboto-mono/500.css';
+@import '@fontsource/roboto-mono/700.css';
+@import 'tailwindcss';
+
+/*
+ * Tokens do Figma (t7YGbSWoRJdQt7T0ctJwy0).
+ * Fonte: design/tokens/figma-variables.json — saída de get_variable_defs.
+ * Nenhuma cor literal fora deste bloco: tudo no app referencia estes nomes.
+ */
+@theme {
+  /* ---- cores ---- */
+  --color-ink: #140d0a; /* fundo da página */
+  --color-surface-card: #241612; /* card, linha de carrinho, modal */
+  --color-surface-dark: #38220f; /* faixa de contato do rodapé */
+  --color-border: #3f2319;
+  --color-border-soft: #55321f;
+  --color-primary: #d28a4c; /* botão cheio, badge, barra ativa */
+  --color-text-accent: #e89b55; /* preço, link, nav ativa */
+  --color-secondary: #b39463;
+  --color-text-secondary: #cfb28c; /* label, placeholder, texto de apoio */
+  --color-foreground: #f5f1eb;
+  --color-text-primary: #f7f3ec;
+  --color-background-elevated: #fbfbfb;
+
+  /* ---- tipografia ----
+   * O design usa Roboto Mono em praticamente tudo, inclusive títulos.
+   * Não é decoração: é a identidade da marca, então mono é a família padrão. */
+  --font-sans: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-mono: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* escala tipográfica nomeada — os 26 estilos do Figma reduzidos aos que
+   * realmente aparecem; cada um carrega seu line-height. */
+  --text-display: 43px;
+  --text-display--line-height: 1.15;
+  --text-display--font-weight: 700;
+
+  --text-heading: 24px;
+  --text-heading--line-height: 1.25;
+  --text-heading--font-weight: 700;
+
+  --text-lg: 18px;
+  --text-lg--line-height: 24px;
+
+  --text-md: 17px;
+  --text-md--line-height: 1.4;
+
+  --text-base: 16px;
+  --text-base--line-height: 20px;
+
+  --text-sm: 15px;
+  --text-sm--line-height: 1.45;
+
+  --text-xs: 14px;
+  --text-xs--line-height: 22px;
+
+  --text-2xs: 13px;
+  --text-2xs--line-height: 22px;
+
+  --text-3xs: 12px;
+  --text-3xs--line-height: 14px;
+
+  --text-tiny: 10px;
+  --text-tiny--line-height: 1.2;
+
+  --text-micro: 9px;
+  --text-micro--line-height: 1.2;
+
+  /* ---- raios ---- medidos nos PNGs */
+  --radius-input: 4px;
+  --radius-btn: 6px;
+  --radius-card: 8px;
+  --radius-modal: 10px;
+
+  /* ---- layout ---- conteúdo de x=120 a x=1320 num frame de 1440 */
+  --spacing-container: 1200px;
+  --spacing-header: 75px;
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-ink text-foreground font-sans antialiased;
+    font-size: var(--text-base);
+  }
+
+  /* O design não mostra outline customizado, mas navegação por teclado
+   * precisa de foco visível. Usa o primary, que já é a cor de ação. */
+  :focus-visible {
+    @apply outline-primary outline-2 outline-offset-2;
+  }
+
+  ::placeholder {
+    @apply text-text-secondary/60;
+  }
+
+  /* números tabulares em preço e total: sem isso as colunas de ETH dançam
+   * conforme os dígitos mudam */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer utilities {
+  .container-kurio {
+    width: 100%;
+    max-width: var(--spacing-container);
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+}
+
+@layer components {
+  /* polegares da faixa de preço: a trilha é desenhada por divs atrás, então o
+   * input em si fica transparente e só os polegares recebem o ponteiro */
+  .range-thumb {
+    pointer-events: none;
+  }
+
+  .range-thumb::-webkit-slider-thumb {
+    pointer-events: auto;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 9999px;
+    background: var(--color-primary);
+    cursor: pointer;
+  }
+
+  .range-thumb::-moz-range-thumb {
+    pointer-events: auto;
+    width: 16px;
+    height: 16px;
+    border: 0;
+    border-radius: 9999px;
+    background: var(--color-primary);
+    cursor: pointer;
+  }
+}

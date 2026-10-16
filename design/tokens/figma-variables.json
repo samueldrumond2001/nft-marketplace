@@ -1,0 +1,52 @@
+{
+  "_source": "Figma file t7YGbSWoRJdQt7T0ctJwy0, page 0:1, node 2:2 (Desktop / Início)",
+  "_note": "Saída bruta de get_variable_defs. As chaves duplicadas em caixa diferente (color/primary vs Color/Primary) são o mesmo token: a primeira é a variável, a segunda o estilo que a consome.",
+
+  "color": {
+    "ink": "#140D0A",
+    "surface-card": "#241612",
+    "surface-dark": "#38220F",
+    "border": "#3F2319",
+    "border-soft": "#55321F",
+    "primary": "#D28A4C",
+    "text-accent": "#E89B55",
+    "secondary": "#B39463",
+    "text-secondary": "#CFB28C",
+    "foreground": "#F5F1EB",
+    "text-primary": "#F7F3EC",
+    "background-elevated": "#FBFBFB"
+  },
+
+  "font": {
+    "family": "Roboto Mono"
+  },
+
+  "type": {
+    "display-43-bold": { "size": 43, "weight": 700, "lineHeight": "auto", "letterSpacing": 0 },
+    "heading-24-bold": { "size": 24, "weight": 700, "lineHeight": "auto", "letterSpacing": 0 },
+    "body-lg-18-bold-lh24": { "size": 18, "weight": 700, "lineHeight": 24, "letterSpacing": 0 },
+    "body-lg-18-bold-lh16": { "size": 18, "weight": 700, "lineHeight": 16, "letterSpacing": 0 },
+    "body-lg-18-regular": { "size": 18, "weight": 400, "lineHeight": 16, "letterSpacing": 0 },
+    "body-lg-17-bold": { "size": 17, "weight": 700, "lineHeight": 16, "letterSpacing": 0 },
+    "body-lg-16-bold-lh20": { "size": 16, "weight": 700, "lineHeight": 20, "letterSpacing": 0 },
+    "body-lg-16-bold": { "size": 16, "weight": 700, "lineHeight": "auto", "letterSpacing": 0 },
+    "body-lg-16-medium": { "size": 16, "weight": 500, "lineHeight": "auto", "letterSpacing": 0 },
+    "body-lg-16-regular": { "size": 16, "weight": 400, "lineHeight": "auto", "letterSpacing": 0 },
+    "body-lg-16-regular-lh16": { "size": 16, "weight": 400, "lineHeight": 16, "letterSpacing": 0 },
+    "body-15-bold-lh40": { "size": 15, "weight": 700, "lineHeight": 40, "letterSpacing": 0 },
+    "body-15-regular-lh40": { "size": 15, "weight": 400, "lineHeight": 40, "letterSpacing": 0 },
+    "body-15-regular-lh16": { "size": 15, "weight": 400, "lineHeight": "auto", "letterSpacing": 0 },
+    "body-15-medium": { "size": 15, "weight": 500, "lineHeight": 16, "letterSpacing": 0 },
+    "body-14-bold": { "size": 14, "weight": 700, "lineHeight": "auto", "letterSpacing": 10 },
+    "body-14-medium-lh16": { "size": 14, "weight": 500, "lineHeight": 16, "letterSpacing": 10 },
+    "body-14-medium-lh20": { "size": 14, "weight": 500, "lineHeight": 20, "letterSpacing": 0 },
+    "body-14-regular-lh30": { "size": 14, "weight": 400, "lineHeight": 30, "letterSpacing": 0 },
+    "body-14-regular-lh24": { "size": 14, "weight": 400, "lineHeight": 24, "letterSpacing": 0 },
+    "body-14-regular-lh22": { "size": 14, "weight": 400, "lineHeight": 22, "letterSpacing": 0 },
+    "body-14-regular-lh16": { "size": 14, "weight": 400, "lineHeight": 16, "letterSpacing": 0 },
+    "caption-13-regular-lh22": { "size": 13, "weight": 400, "lineHeight": 22, "letterSpacing": 0 },
+    "caption-12-bold": { "size": 12, "weight": 700, "lineHeight": 14, "letterSpacing": 0 },
+    "tiny-10-medium": { "size": 10, "weight": 500, "lineHeight": "auto", "letterSpacing": 0 },
+    "tiny-9-bold": { "size": 9, "weight": 700, "lineHeight": "auto", "letterSpacing": 0.1 }
+  }
+}
